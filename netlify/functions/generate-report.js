@@ -99,7 +99,7 @@ Use the 4-step process and the 8-section report structure described in the syste
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5.0',
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },

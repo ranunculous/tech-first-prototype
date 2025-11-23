@@ -67,15 +67,31 @@
       border: 1px solid #ddd;
       font-size: 0.95rem;
     }
+    .hidden {
+      display: none;
+    }
+    .question-box {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .question-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
   <h1>Tech-First Thinking™ – Airport Prototype</h1>
   <p class="small">
     This tool applies your Tech-First Thinking™ framework specifically to airport projects
-    (terminals, concourses, curb, security, FIS, etc.). Use a real airport project.
+    (terminals, concourses, security, FIS, curbside, etc.). Use a real airport project.
   </p>
 
+  <!-- STEP 1: PROJECT INPUTS -->
+  <h2>Step 1 — Describe your airport project</h2>
   <form id="project-form">
     <label>
       Project name
@@ -165,9 +181,28 @@
       ></textarea>
     </label>
 
-    <button type="submit">Generate Tech-First Airport Report</button>
+    <button type="submit">Continue — Ask a Clarifying Question</button>
   </form>
 
+  <!-- STEP 2: CLARIFYING QUESTION -->
+  <div id="question-step" class="hidden">
+    <h2>Step 2 — Strategic clarification</h2>
+    <div class="question-box">
+      <div class="question-label">Tech-First Thinking™ asks:</div>
+      <div id="clarifying-question" class="small"></div>
+      <label style="margin-top: 1rem;">
+        Your answer
+        <textarea
+          id="clarifying-answer"
+          rows="3"
+          placeholder="Answer this one question as specifically as you can. This will sharpen the airport strategy."
+        ></textarea>
+      </label>
+    </div>
+    <button id="generate-report-btn">Generate Tech-First Airport Report</button>
+  </div>
+
+  <!-- STATUS + OUTPUT -->
   <div id="status"></div>
   <div id="output"></div>
 
@@ -176,13 +211,74 @@
     const statusEl = document.getElementById('status');
     const outputEl = document.getElementById('output');
 
+    const questionStepEl = document.getElementById('question-step');
+    const clarifyingQuestionEl = document.getElementById('clarifying-question');
+    const clarifyingAnswerEl = document.getElementById('clarifying-answer');
+    const generateReportBtn = document.getElementById('generate-report-btn');
+
+    // We'll store the original form payload so we can reuse it when generating the report
+    let storedPayload = null;
+    let storedQuestion = null;
+
+    // Step 1: submit project info and get a clarifying question
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusEl.textContent = 'Generating report… this may take a minute.';
+      statusEl.textContent = 'Analyzing your project… asking one strategic clarifying question.';
       outputEl.textContent = '';
+      questionStepEl.classList.add('hidden');
+      clarifyingAnswerEl.value = '';
 
       const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
+      storedPayload = payload; // store for later
+
+      try {
+        const res = await fetch('/.netlify/functions/generate-question', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Request failed');
+        }
+
+        const data = await res.json();
+        const question = data.question || 'Before I proceed, what is the single most important thing I should know about this project?';
+
+        storedQuestion = question;
+        clarifyingQuestionEl.textContent = question;
+        questionStepEl.classList.remove('hidden');
+        statusEl.textContent = 'Answer the question below, then generate your report.';
+
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error generating clarifying question. Please try again.';
+      }
+    });
+
+    // Step 2: submit clarifying answer and generate report
+    generateReportBtn.addEventListener('click', async () => {
+      if (!storedPayload) {
+        statusEl.textContent = 'Please complete Step 1 first.';
+        return;
+      }
+
+      const clarifyingAnswer = clarifyingAnswerEl.value.trim();
+      if (!clarifyingAnswer) {
+        statusEl.textContent = 'Please answer the clarifying question before generating the report.';
+        return;
+      }
+
+      statusEl.textContent = 'Generating Tech-First airport report… this may take a minute.';
+      outputEl.textContent = '';
+
+      const payload = {
+        ...storedPayload,
+        clarifyingQuestion: storedQuestion || '',
+        clarifyingAnswer,
+      };
 
       try {
         const res = await fetch('/.netlify/functions/generate-report', {

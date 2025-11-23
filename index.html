@@ -119,6 +119,21 @@
     Enter your airport project details.
   </p>
 
+  <!-- ACCESS CODE -->
+  <section id="access">
+    <label>
+      Access code
+      <input
+        type="password"
+        id="access-code-input"
+        placeholder="Enter the access code you received"
+      />
+    </label>
+    <p class="small">
+      Only invited users can run reports. If you don't have an access code, contact the creator.
+    </p>
+  </section>
+
   <!-- WHAT IS TECH-FIRST THINKING SECTION -->
   <section id="what-is">
     <h2>What is Tech-First Thinking?</h2>
@@ -307,6 +322,7 @@
     const exportInfoEl = document.getElementById('export-info');
 
     const reportsListEl = document.getElementById('reports-list');
+    const accessCodeInput = document.getElementById('access-code-input');
 
     let storedPayload = null;
     let storedQuestion = null;
@@ -319,6 +335,10 @@
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
+    }
+
+    function getAccessCode() {
+      return accessCodeInput ? accessCodeInput.value.trim() : '';
     }
 
     function getCurrentMonthKey() {
@@ -465,6 +485,7 @@
 
       const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
+      payload.accessCode = getAccessCode();
       storedPayload = payload; // store for later
 
       try {
@@ -488,7 +509,11 @@
         statusEl.textContent = 'Answer the question below, then generate your report.';
       } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Error generating clarifying question. Please try again.';
+        if (String(err).includes('Forbidden')) {
+          statusEl.textContent = 'Access denied: check your access code.';
+        } else {
+          statusEl.textContent = 'Error generating clarifying question. Please try again.';
+        }
       }
     });
 
@@ -513,6 +538,7 @@
         ...storedPayload,
         clarifyingQuestion: storedQuestion || '',
         clarifyingAnswer,
+        accessCode: getAccessCode(),
       };
 
       try {
@@ -538,7 +564,11 @@
         }
       } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Error generating report. Check console or try again.';
+        if (String(err).includes('Forbidden')) {
+          statusEl.textContent = 'Access denied: check your access code.';
+        } else {
+          statusEl.textContent = 'Error generating report. Check console or try again.';
+        }
       }
     });
 
@@ -573,3 +603,4 @@
   </script>
 </body>
 </html>
+

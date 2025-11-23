@@ -87,6 +87,29 @@
       border: none;
       border-top: 1px solid #ddd;
     }
+    .reports-list-item {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+    .reports-list-item-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .inline-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .inline-buttons button {
+      width: auto;
+      margin-top: 0;
+      padding-inline: 0.75rem;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
@@ -96,56 +119,37 @@
     Enter your airport project details.
   </p>
 
-<section id="what-is">
-  <h2>What is Tech-First Thinking?</h2>
-  <p>
-    Tech-First Thinking is a strategic design method for architects who refuse to work in the old order — 
-    the world where design begins with form and ends with drawings. It is for those who see that buildings 
-    now operate as systems, and that outcomes are shaped as much by data, flow, and intelligence as by 
-    materials and geometry.
-  </p>
-
-  <p>
-    Tech-First Thinking starts where design-only thinking stops: with the outcomes a place must deliver. 
-    Throughput, comfort, reliability, clarity, revenue, safety, humanity — these are not aesthetic questions, 
-    they are system questions. And today, systems run on technology.
-  </p>
-
-  <p>
-    This is one of the core tools of the <strong>Innovation Architect</strong> — a new kind of architect who 
-    integrates technology, behavior, and physical space to create environments that actually work. 
-    Innovation Architects don’t draw buildings first. They shape the conditions that make innovation possible: 
-    the flows, the frictions, the hidden constraints, the operational logic, and the technological leverage 
-    points that change what a project can become.
-  </p>
-
-  <p>
-    Airports are the clearest proving ground. They expose everything: limits of space, limits of process, 
-    limits of comfort, limits of current systems. A Tech-First approach helps airport designers understand 
-    not just what a concourse <em>should look like</em>, but how it should perform — and how technology 
-    can unlock outcomes that drawings alone never could.
-  </p>
-
-  <p>
-    This tool applies that method. Enter your project. It will interpret the context, identify leverage, 
-    ask one clarifying question, and generate a Tech-First strategy you can use with colleagues, clients, 
-    or on your own projects. It is not a design tool. It is a thinking tool.
-  </p>
-</section>
-
-  <section id="how-it-works">
-    <h2>How this tool works</h2>
-    <p class="small">
-      Under the hood, this tool applies an airport-specific version of the Tech-First Thinking framework:
+  <!-- WHAT IS TECH-FIRST THINKING SECTION -->
+  <section id="what-is">
+    <h2>What is Tech-First Thinking?</h2>
+    <p>
+      Tech-First Thinking is a strategic design method for architects who refuse to work in the old order —
+      the world where design begins with form and ends with drawings. It is for those who see that buildings
+      now operate as systems, and that outcomes are shaped as much by data, flow, and intelligence as by
+      materials and geometry.
     </p>
-    <ul class="small">
-      <li><strong>Discover</strong> – Interpret context, constraints, and pain points.</li>
-      <li><strong>Define</strong> – Turn goals into measurable, tech-leverageable outcomes.</li>
-      <li><strong>Design</strong> – Focus on critical journey moments and where tech actually moves the needle.</li>
-      <li><strong>Deploy</strong> – Synthesize it all into a Tech-First brief and roadmap.</li>
-    </ul>
-    <p class="small">
-      You give it a real project. It gives you a structured airport strategy you can discuss with your team, your client, or your own future self.
+    <p>
+      Tech-First Thinking starts where design-only thinking stops: with the outcomes a place must deliver.
+      Throughput, comfort, reliability, clarity, revenue, safety, humanity — these are not aesthetic questions,
+      they are system questions. And today, systems run on technology.
+    </p>
+    <p>
+      This is one of the core tools of the <strong>Innovation Architect</strong> — a new kind of architect who
+      integrates technology, behavior, and physical space to create environments that actually work.
+      Innovation Architects don’t draw buildings first. They shape the conditions that make innovation possible:
+      the flows, the frictions, the hidden constraints, the operational logic, and the technological leverage
+      points that change what a project can become.
+    </p>
+    <p>
+      Airports are the clearest proving ground. They expose everything: limits of space, limits of process,
+      limits of comfort, limits of current systems. A Tech-First approach helps airport designers understand
+      not just what a concourse <em>should look like</em>, but how it should perform — and how technology
+      can unlock outcomes that drawings alone never could.
+    </p>
+    <p>
+      This tool applies that method. Enter your project. It will interpret the context, identify leverage,
+      ask one clarifying question, and generate a Tech-First strategy you can use with colleagues, clients,
+      or on your own projects. It is not a design tool. It is a thinking tool.
     </p>
   </section>
 
@@ -263,9 +267,29 @@
     <button id="generate-report-btn">Generate Tech-First Airport Report</button>
   </div>
 
-  <!-- STATUS + OUTPUT -->
+  <!-- STATUS + OUTPUT + ACTIONS -->
   <div id="status"></div>
+
   <div id="output"></div>
+
+  <div id="report-actions" class="hidden">
+    <div class="inline-buttons">
+      <button id="save-report-btn">Save to My Reports</button>
+      <button id="download-report-btn">Download as Word (.doc)</button>
+    </div>
+    <p class="small" id="export-info"></p>
+  </div>
+
+  <!-- MY REPORTS SECTION -->
+  <hr class="divider" />
+  <section id="my-reports">
+    <h2>My Reports</h2>
+    <p class="small">
+      Reports saved here stay in this browser only. You can reopen them and export them again later.
+      Free tier: up to 5 Word exports per month per browser.
+    </p>
+    <div id="reports-list"></div>
+  </section>
 
   <script>
     const form = document.getElementById('project-form');
@@ -277,15 +301,165 @@
     const clarifyingAnswerEl = document.getElementById('clarifying-answer');
     const generateReportBtn = document.getElementById('generate-report-btn');
 
-    // We'll store the original form payload so we can reuse it when generating the report
+    const reportActionsEl = document.getElementById('report-actions');
+    const saveReportBtn = document.getElementById('save-report-btn');
+    const downloadReportBtn = document.getElementById('download-report-btn');
+    const exportInfoEl = document.getElementById('export-info');
+
+    const reportsListEl = document.getElementById('reports-list');
+
     let storedPayload = null;
     let storedQuestion = null;
+    let currentReport = null;
 
-    // Step 1: submit project info and get a clarifying question
+    // ----- UTILITIES -----
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function getCurrentMonthKey() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      return `tft_export_count_${year}${month}`;
+    }
+
+    function getExportCount() {
+      const key = getCurrentMonthKey();
+      const val = localStorage.getItem(key);
+      return val ? parseInt(val, 10) || 0 : 0;
+    }
+
+    function incrementExportCount() {
+      const key = getCurrentMonthKey();
+      const current = getExportCount();
+      localStorage.setItem(key, String(current + 1));
+    }
+
+    function updateExportInfo() {
+      const count = getExportCount();
+      const remaining = Math.max(0, 5 - count);
+      exportInfoEl.textContent = `Free tier: ${remaining} Word export${remaining === 1 ? "" : "s"} remaining this month on this browser (limit 5).`;
+    }
+
+    function getSavedReports() {
+      const raw = localStorage.getItem("tft_saved_reports");
+      if (!raw) return [];
+      try {
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveReportsToStorage(reports) {
+      localStorage.setItem("tft_saved_reports", JSON.stringify(reports));
+    }
+
+    function renderReportsList() {
+      const reports = getSavedReports();
+      reportsListEl.innerHTML = "";
+
+      if (reports.length === 0) {
+        reportsListEl.innerHTML = '<p class="small">No reports saved yet.</p>';
+        return;
+      }
+
+      reports.forEach((r, index) => {
+        const div = document.createElement("div");
+        div.className = "reports-list-item";
+
+        const title = document.createElement("div");
+        title.className = "reports-list-item-title";
+        title.textContent = r.projectName || `Report ${index + 1}`;
+
+        const meta = document.createElement("div");
+        meta.className = "small";
+        meta.textContent = r.createdAt
+          ? `Created: ${new Date(r.createdAt).toLocaleString()}`
+          : "";
+
+        const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "inline-buttons";
+
+        const viewBtn = document.createElement("button");
+        viewBtn.type = "button";
+        viewBtn.textContent = "View";
+        viewBtn.addEventListener("click", () => {
+          currentReport = r.report;
+          outputEl.textContent = r.report;
+          reportActionsEl.classList.remove("hidden");
+          statusEl.textContent = `Showing saved report: ${r.projectName || "Untitled"}`;
+          updateExportInfo();
+        });
+
+        const downloadBtn = document.createElement("button");
+        downloadBtn.type = "button";
+        downloadBtn.textContent = "Download as Word";
+        downloadBtn.addEventListener("click", () => {
+          if (!canExport()) return;
+          downloadAsWord(r.report, r.projectName);
+        });
+
+        buttonsDiv.appendChild(viewBtn);
+        buttonsDiv.appendChild(downloadBtn);
+
+        div.appendChild(title);
+        div.appendChild(meta);
+        div.appendChild(buttonsDiv);
+
+        reportsListEl.appendChild(div);
+      });
+    }
+
+    function canExport() {
+      const count = getExportCount();
+      if (count >= 5) {
+        alert("Free tier limit reached: 5 Word exports this month on this browser.");
+        return false;
+      }
+      return true;
+    }
+
+    function downloadAsWord(reportText, projectName) {
+      const safeTitle = (projectName || "tech-first-report").replace(/[^\w\-]+/g, "_");
+      const fileName = `${safeTitle}.doc`;
+
+      const html =
+        "<html><head><meta charset='utf-8'></head><body>" +
+        "<pre style='font-family: Avenir, system-ui, sans-serif; white-space: pre-wrap;'>" +
+        escapeHtml(reportText) +
+        "</pre></body></html>";
+
+      const blob = new Blob([html], { type: "application/msword" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      incrementExportCount();
+      updateExportInfo();
+    }
+
+    // ----- INIT -----
+    renderReportsList();
+    updateExportInfo();
+
+    // ----- STEP 1: submit project info and get a clarifying question -----
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusEl.textContent = 'Analyzing your project… asking one strategic clarifying question.';
       outputEl.textContent = '';
+      reportActionsEl.classList.add("hidden");
       questionStepEl.classList.add('hidden');
       clarifyingAnswerEl.value = '';
 
@@ -312,14 +486,13 @@
         clarifyingQuestionEl.textContent = question;
         questionStepEl.classList.remove('hidden');
         statusEl.textContent = 'Answer the question below, then generate your report.';
-
       } catch (err) {
         console.error(err);
         statusEl.textContent = 'Error generating clarifying question. Please try again.';
       }
     });
 
-    // Step 2: submit clarifying answer and generate report
+    // ----- STEP 2: submit clarifying answer and generate report -----
     generateReportBtn.addEventListener('click', async () => {
       if (!storedPayload) {
         statusEl.textContent = 'Please complete Step 1 first.';
@@ -334,6 +507,7 @@
 
       statusEl.textContent = 'Generating Tech-First airport report… this may take a minute.';
       outputEl.textContent = '';
+      reportActionsEl.classList.add("hidden");
 
       const payload = {
         ...storedPayload,
@@ -354,12 +528,47 @@
         }
 
         const data = await res.json();
+        currentReport = data.report || '';
         statusEl.textContent = 'Done.';
-        outputEl.textContent = data.report || '(No report returned)';
+        outputEl.textContent = currentReport || '(No report returned)';
+
+        if (currentReport) {
+          reportActionsEl.classList.remove("hidden");
+          updateExportInfo();
+        }
       } catch (err) {
         console.error(err);
         statusEl.textContent = 'Error generating report. Check console or try again.';
       }
+    });
+
+    // ----- SAVE CURRENT REPORT -----
+    saveReportBtn.addEventListener("click", () => {
+      if (!currentReport) {
+        alert("Generate a report first.");
+        return;
+      }
+      const reports = getSavedReports();
+      const projectNameInput = storedPayload?.projectName || "Untitled project";
+      reports.push({
+        projectName: projectNameInput,
+        report: currentReport,
+        createdAt: new Date().toISOString(),
+      });
+      saveReportsToStorage(reports);
+      renderReportsList();
+      alert("Report saved to this browser under 'My Reports'.");
+    });
+
+    // ----- DOWNLOAD CURRENT REPORT -----
+    downloadReportBtn.addEventListener("click", () => {
+      if (!currentReport) {
+        alert("Generate a report first.");
+        return;
+      }
+      if (!canExport()) return;
+      const projectNameInput = storedPayload?.projectName || "tech-first-report";
+      downloadAsWord(currentReport, projectNameInput);
     });
   </script>
 </body>

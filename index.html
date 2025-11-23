@@ -2,82 +2,170 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Tech-First Thinking™ Prototype</title>
+  <title>Tech-First Thinking™ – Airport Prototype</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 2rem; max-width: 900px; margin-inline: auto; line-height: 1.5; }
-    h1 { margin-bottom: 0.25rem; }
-    h2 { margin-top: 2rem; }
-    label { display: block; font-weight: 600; margin-top: 1rem; }
-    input, textarea, select, button { width: 100%; padding: 0.5rem; margin-top: 0.25rem; font-size: 1rem; }
-    button { margin-top: 1.5rem; cursor: pointer; }
-    .small { font-size: 0.9rem; color: #555; }
-    #status { margin-top: 1rem; font-size: 0.95rem; }
-    #output { margin-top: 2rem; white-space: pre-wrap; background: #f6f6f6; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      max-width: 960px;
+      margin-inline: auto;
+      line-height: 1.5;
+      background: #fafafa;
+    }
+    h1 {
+      margin-bottom: 0.25rem;
+    }
+    h2 {
+      margin-top: 2rem;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+    input,
+    textarea,
+    select,
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      margin-top: 1.5rem;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #111;
+      background: #111;
+      color: #fff;
+      font-weight: 600;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .small {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    #status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    #output {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      background: #f6f6f6;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Tech-First Thinking™</h1>
+  <h1>Tech-First Thinking™ – Airport Prototype</h1>
   <p class="small">
-    Prototype Innovation Architect tool. Fill in a real project and generate a tech-first, outcome-driven brief.
+    This tool applies your Tech-First Thinking™ framework specifically to airport projects
+    (terminals, concourses, curb, security, FIS, etc.). Use a real airport project.
   </p>
 
   <form id="project-form">
     <label>
       Project name
-      <input type="text" name="projectName" required />
+      <input type="text" name="projectName" placeholder="e.g., LAX T7–T8 Refresh" required />
     </label>
 
     <label>
-      Building typology
+      Airport area / typology
       <select name="typology" required>
         <option value="">Select one…</option>
-        <option>Airport terminal / concourse</option>
+        <option>Terminal modernization</option>
+        <option>New concourse</option>
         <option>Remote concourse / ADA-like</option>
-        <option>Hospital / healthcare</option>
-        <option>School / higher education</option>
-        <option>Office / workplace</option>
-        <option>Campus / mixed-use</option>
-        <option>Other</option>
+        <option>Departures hall / check-in</option>
+        <option>Security checkpoint</option>
+        <option>Holdrooms / gate areas</option>
+        <option>FIS / arrivals processing</option>
+        <option>Curbside / landside</option>
+        <option>Multi-area / system-wide</option>
+        <option>Other airport facility</option>
       </select>
     </label>
 
     <label>
       Location / context
-      <input type="text" name="location" placeholder="City, region, climate, any key context" required />
+      <input
+        type="text"
+        name="location"
+        placeholder="City, region, climate, aviation role (hub vs O&D), expected demand, major events (e.g., Olympics)."
+        required
+      />
     </label>
 
     <label>
       Primary users / stakeholders
-      <textarea name="users" rows="2" placeholder="Passengers, staff, patients, students, tenants, operators, etc." required></textarea>
+      <textarea
+        name="users"
+        rows="2"
+        placeholder="e.g., departing passengers, arriving passengers, airline staff, airport ops, TSA, CBP, concessions operators, etc."
+        required
+      ></textarea>
     </label>
 
     <label>
-      Top 3 organizational goals
-      <textarea name="goals" rows="3" placeholder="In plain language – operations, experience, revenue, resilience, etc." required></textarea>
+      Organizational goals (list as many as you like)
+      <textarea
+        name="goals"
+        rows="3"
+        placeholder="List goals from different stakeholders: operations, passenger experience, airlines, revenue, resilience, Skytrax/IATA targets, Olympics readiness, etc."
+        required
+      ></textarea>
     </label>
 
     <label>
       Time horizon
-      <input type="text" name="timeHorizon" placeholder="e.g., Design for 2030, 10-year adaptability" />
+      <input
+        type="text"
+        name="timeHorizon"
+        placeholder="e.g., Design for 2030, 10-year adaptability, opening by 2028 for Olympics."
+      />
     </label>
 
     <label>
       Known / existing digital systems
-      <textarea name="systems" rows="3" placeholder="BMS, wayfinding, apps, kiosks, sensors, data platforms, etc. (as far as you know)"></textarea>
+      <textarea
+        name="systems"
+        rows="3"
+        placeholder="BMS, FIDS, AODB, wayfinding, existing analytics dashboards, queue management, security systems, apps, etc. (as far as you know)."
+      ></textarea>
     </label>
 
     <label>
       Key constraints / non-negotiables
-      <textarea name="constraints" rows="3" placeholder="Budget, schedule, regulations, political realities, physical site constraints, etc."></textarea>
+      <textarea
+        name="constraints"
+        rows="3"
+        placeholder="e.g., fixed footprint, limited budget, aggressive schedule, construction phasing with live operations, security and regulatory constraints, airline lease limits, etc."
+      ></textarea>
     </label>
 
     <label>
       Current pain points / frustrations
-      <textarea name="painPoints" rows="3" placeholder="What's broken or annoying today? What isn't working as it should?"></textarea>
+      <textarea
+        name="painPoints"
+        rows="3"
+        placeholder="What's broken or frustrating today? e.g., undersized holdrooms at peak, security queues exceeding targets, weak concessions spend, inconsistent passenger experience, etc."
+      ></textarea>
     </label>
 
-    <button type="submit">Generate Tech-First Report</button>
+    <button type="submit">Generate Tech-First Airport Report</button>
   </form>
 
   <div id="status"></div>

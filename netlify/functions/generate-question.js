@@ -11,6 +11,16 @@ exports.handler = async (event) => {
 
     const body = JSON.parse(event.body || '{}');
 
+    const { accessCode } = body;
+    const expectedCode = process.env.ACCESS_CODE;
+
+    if (!expectedCode || accessCode !== expectedCode) {
+      return {
+        statusCode: 403,
+        body: 'Forbidden: invalid or missing access code.',
+      };
+    }
+
     const {
       projectName,
       typology,

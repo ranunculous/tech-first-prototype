@@ -21,6 +21,8 @@ exports.handler = async (event) => {
       systems,
       constraints,
       painPoints,
+      clarifyingQuestion,
+      clarifyingAnswer,
     } = body;
 
     if (!projectName || !typology || !location || !users || !goals) {
@@ -64,7 +66,11 @@ PROJECT DATA (from user)
 - Constraints / non-negotiables: ${constraints || 'not specified'}
 - Pain points / frustrations: ${painPoints || 'not specified'}
 
-When you write the report, you must INTERPRET this data. Do not simply echo it.
+CLARIFYING Q&A:
+- Your clarifying question: ${clarifyingQuestion || 'not provided'}
+- User's answer: ${clarifyingAnswer || 'not provided'}
+
+You must INTERPRET this data. Do not simply echo it.
 
 --------------------------------
 STEP 1 – DISCOVER (Context & Tech Scan)
@@ -77,7 +83,7 @@ STEP 1 – DISCOVER (Context & Tech Scan)
 - Explicitly state 3–5 contextual factors that will shape tech and design decisions.
 
 1.2 Tech Scan (NOW / NEXT)
-- Based on the context, goals, constraints, and PAIN POINTS, identify technology PATTERNS (not vendors) relevant to airport terminals and concourses, for example:
+- Based on the context, goals, constraints, pain points, and clarifying answer, identify technology PATTERNS (not vendors) relevant to airport terminals and concourses, for example:
   - Passenger flow analytics, queue management, smart boarding.
   - Dynamic gate allocation, stand optimization.
   - Smart holdrooms (reconfigurable furniture, space utilization sensing).
@@ -102,7 +108,7 @@ Output:
 --------------------------------
 STEP 2 – DEFINE (Outcomes)
 --------------------------------
-Use the goals, pain points, constraints, and Tech Scan to propose 5–8 OUTCOMES.
+Use the goals, pain points, constraints, Tech Scan, and clarifying answer to propose 5–8 OUTCOMES.
 
 Each outcome should follow this structure:
   DIRECTION of improvement + UNIT of measure + OBJECT of control + CONTEXTUAL clarifier.
@@ -220,10 +226,10 @@ Use the 4-step process (DISCOVER → DEFINE → DESIGN → DEPLOY) and the 8-sec
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('OpenAI error:', errText);
+      console.error('OpenAI error (report):', errText);
       return {
         statusCode: 500,
-        body: 'Error from OpenAI API',
+        body: 'Error from OpenAI API (report)',
       };
     }
 
@@ -237,10 +243,10 @@ Use the 4-step process (DISCOVER → DEFINE → DESIGN → DEPLOY) and the 8-sec
     };
 
   } catch (err) {
-    console.error('Function error:', err);
+    console.error('Function error (report):', err);
     return {
       statusCode: 500,
-      body: 'Server error',
+      body: 'Server error (report)',
     };
   }
 };

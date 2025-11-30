@@ -225,7 +225,7 @@ Use the 4-step process (DISCOVER → DEFINE → DESIGN → DEPLOY) and the 8-sec
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5.0',
+        model: 'gpt-5.1',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
